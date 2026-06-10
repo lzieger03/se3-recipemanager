@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Ingredients</title>
+</head>
+<body>
+<section th:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Ingredients</h1>
+        <a th:href="@{/ingredients/new}" class="btn btn-primary">+ New Ingredient</a>
+    </div>
+
+    <table class="table table-striped" th:if="${not #lists.isEmpty(ingredients)}">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Available</th>
+                <th>Unit</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="ingredient : ${ingredients}">
+                <td th:text="${ingredient.name}"></td>
+                <td th:text="${ingredient.availableAmount}"></td>
+                <td th:text="${ingredient.unit}"></td>
+                <td class="text-end">
+                    <a th:href="@{/ingredients/{id}/edit(id=${ingredient.ingredientId})}"
+                       class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <form th:action="@{/ingredients/{id}/delete(id=${ingredient.ingredientId})}"
+                          method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Delete this ingredient?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p th:if="${#lists.isEmpty(ingredients)}" class="text-muted">No ingredients yet.</p>
+</section>
+</body>
+</html>
