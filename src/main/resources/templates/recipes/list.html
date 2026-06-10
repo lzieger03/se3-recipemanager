@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Recipes</title>
+</head>
+<body>
+<section th:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Recipes</h1>
+        <a th:href="@{/recipes/new}" class="btn btn-primary">+ New Recipe</a>
+    </div>
+
+    <div th:if="${not #lists.isEmpty(recipes)}" class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col" th:each="recipe : ${recipes}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${recipe.name}"></h5>
+                    <p class="card-text text-muted" th:text="${recipe.description}"></p>
+                    <p class="card-text"><small>Portions: <span th:text="${recipe.portions}"></span></small></p>
+
+                    <ul class="list-unstyled" th:if="${not #lists.isEmpty(recipe.recipeIngredients)}">
+                        <li th:each="ri : ${recipe.recipeIngredients}">
+                            <span th:text="${ri.requiredAmount}"></span>
+                            <span th:text="${ri.ingredient.unit}"></span>
+                            <span th:text="${ri.ingredient.name}"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    <form th:action="@{/recipes/{id}/cook(id=${recipe.recipeId})}" method="post">
+                        <button type="submit" class="btn btn-success btn-sm">Cook</button>
+                    </form>
+                    <a th:href="@{/recipes/{id}/edit(id=${recipe.recipeId})}"
+                       class="btn btn-outline-secondary btn-sm">Edit</a>
+                    <form th:action="@{/recipes/{id}/delete(id=${recipe.recipeId})}" method="post">
+                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                                onclick="return confirm('Delete this recipe?')">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p th:if="${#lists.isEmpty(recipes)}" class="text-muted">No recipes yet.</p>
+</section>
+</body>
+</html>
