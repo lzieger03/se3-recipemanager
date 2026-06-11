@@ -15,7 +15,11 @@
         <div class="col" th:each="recipe : ${recipes}">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${recipe.name}"></h5>
+                    <h5 class="card-title">
+                        <a th:href="@{/recipes/{id}(id=${recipe.recipeId})}"
+                           class="text-decoration-none text-dark"
+                           th:text="${recipe.name}"></a>
+                    </h5>
                     <p class="card-text text-muted" th:text="${recipe.description}"></p>
                     <p class="card-text"><small>Portions: <span th:text="${recipe.portions}"></span></small></p>
 

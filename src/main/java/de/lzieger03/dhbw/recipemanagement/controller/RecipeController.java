@@ -40,6 +40,17 @@ public class RecipeController {
         return "recipes/list";
     }
 
+    @GetMapping("/{id}")
+    public String detail(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        final var recipeOptional = _recipeService.findById(id);
+        if (recipeOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Recipe not found.");
+            return "redirect:/recipes";
+        }
+        model.addAttribute("recipe", recipeOptional.get());
+        return "recipes/detail";
+    }
+
     @GetMapping("/new")
     public String showNewForm(Model model) {
         model.addAttribute("recipe", new Recipe());

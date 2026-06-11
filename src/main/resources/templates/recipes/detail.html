@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${recipe.name}">Recipe Detail</title>
+</head>
+<body>
+<section th:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h1 th:text="${recipe.name}"></h1>
+            <p class="text-muted" th:text="${recipe.description}"></p>
+        </div>
+        <div class="d-flex gap-2">
+            <a th:href="@{/recipes/{id}/edit(id=${recipe.recipeId})}" class="btn btn-outline-secondary">Edit</a>
+            <form th:action="@{/recipes/{id}/cook(id=${recipe.recipeId})}" method="post">
+                <button type="submit" class="btn btn-success">Cook now</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Ingredients -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header fw-bold">Ingredients</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"
+                        th:each="ri : ${recipe.recipeIngredients}">
+                        <span th:text="${ri.ingredient.name}"></span>
+                        <span class="text-muted">
+                            <span th:text="${ri.requiredAmount}"></span>
+                            <span th:text="${ri.ingredient.unit}"></span>
+                        </span>
+                    </li>
+                    <li class="list-group-item text-muted fst-italic"
+                        th:if="${#lists.isEmpty(recipe.recipeIngredients)}">
+                        No ingredients listed.
+                    </li>
+                </ul>
+                <div class="card-footer text-muted">
+                    Portions: <strong th:text="${recipe.portions}"></strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="col-md-8">
+            <div class="card h-100">
+                <div class="card-header fw-bold">Instructions</div>
+                <div class="card-body">
+                    <p th:if="${recipe.instructions != null and !recipe.instructions.isEmpty()}"
+                       th:text="${recipe.instructions}" style="white-space: pre-wrap;"></p>
+                    <p class="text-muted fst-italic"
+                       th:if="${recipe.instructions == null or recipe.instructions.isEmpty()}">
+                        No instructions provided.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/recipes}" class="btn btn-outline-secondary">← Back to Recipes</a>
+    </div>
+
+</section>
+</body>
+</html>
