@@ -14,9 +14,8 @@
         </div>
         <div class="d-flex gap-2">
             <a th:href="@{/recipes/{id}/edit(id=${recipe.recipeId})}" class="btn btn-outline-secondary">Edit</a>
-            <form th:action="@{/recipes/{id}/cook(id=${recipe.recipeId})}" method="post">
-                <button type="submit" class="btn btn-success">Cook now</button>
-            </form>
+            <a th:href="@{/recipes/{id}/cook(id=${recipe.recipeId})}"
+               class="btn btn-success">&#127859; Kochen</a>
         </div>
     </div>
 

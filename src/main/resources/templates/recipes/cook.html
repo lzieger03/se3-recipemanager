@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="'Kochen – ' + ${recipe.name}">Kochmodus</title>
+</head>
+<body>
+<section th:fragment="content">
+
+    <div class="mb-4">
+        <h1>&#127859; <span th:text="${recipe.name}"></span></h1>
+        <p class="text-muted mb-0">
+            <span th:text="${recipe.portions}"></span> Portionen
+        </p>
+    </div>
+
+    <!-- Status-Banner -->
+    <div class="alert alert-success d-flex align-items-center gap-2" th:if="${canCook}">
+        <span style="font-size:1.3rem;">&#9989;</span>
+        <span>Alle Zutaten vorhanden &ndash; bereit zum Kochen!</span>
+    </div>
+    <div class="alert alert-warning d-flex align-items-center gap-2" th:if="${!canCook}">
+        <span style="font-size:1.3rem;">&#9888;&#65039;</span>
+        <span>Nicht alle Zutaten sind ausreichend vorhanden.</span>
+    </div>
+
+    <!-- Zutaten-Checklist -->
+    <div class="card mb-4">
+        <div class="card-header fw-bold">Zutatencheck</div>
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Zutat</th>
+                    <th>Benötigt</th>
+                    <th>Vorhanden</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ri : ${recipe.recipeIngredients}"
+                    th:classappend="${ri.ingredient.availableAmount >= ri.requiredAmount} ? '' : 'table-danger'">
+                    <td th:text="${ri.ingredient.name}"></td>
+                    <td>
+                        <strong th:text="${ri.requiredAmount}"></strong>
+                        <span class="text-muted" th:text="${ri.ingredient.unit}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${ri.ingredient.availableAmount}"></span>
+                        <span class="text-muted" th:text="${ri.ingredient.unit}"></span>
+                    </td>
+                    <td>
+                        <span class="badge bg-success fs-6"
+                              th:if="${ri.ingredient.availableAmount >= ri.requiredAmount}">&#10003; OK</span>
+                        <span class="badge bg-danger fs-6"
+                              th:if="${ri.ingredient.availableAmount < ri.requiredAmount}">&#10007; Zu wenig</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recipe.recipeIngredients)}">
+                    <td colspan="4" class="text-muted fst-italic">Keine Zutaten hinterlegt.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Aktionen -->
+    <div class="d-flex gap-3 align-items-center">
+        <form th:action="@{/recipes/{id}/cook(id=${recipe.recipeId})}" method="post">
+            <button type="submit" class="btn btn-success btn-lg">
+                &#9989; Fertig gekocht &ndash; Zutaten abziehen
+            </button>
+        </form>
+        <a th:href="@{/recipes/{id}(id=${recipe.recipeId})}"
+           class="btn btn-outline-secondary btn-lg">Abbrechen</a>
+    </div>
+
+    <p class="text-muted mt-3" th:if="${!canCook}">
+        <small>Du kannst trotzdem auf "Fertig gekocht" klicken &ndash; fehlende Zutaten werden als Fehler angezeigt.</small>
+    </p>
+
+</section>
+</body>
+</html>

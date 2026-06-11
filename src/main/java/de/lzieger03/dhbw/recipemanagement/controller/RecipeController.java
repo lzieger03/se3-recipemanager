@@ -51,6 +51,21 @@ public class RecipeController {
         return "recipes/detail";
     }
 
+    @GetMapping("/{id}/cook")
+    public String cookMode(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        final var recipeOptional = _recipeService.findById(id);
+        if (recipeOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Recipe not found.");
+            return "redirect:/recipes";
+        }
+        final Recipe recipe = recipeOptional.get();
+        final boolean canCook = recipe.getRecipeIngredients().stream()
+                .allMatch(ri -> ri.getIngredient().getAvailableAmount() >= ri.getRequiredAmount());
+        model.addAttribute("recipe", recipe);
+        model.addAttribute("canCook", canCook);
+        return "recipes/cook";
+    }
+
     @GetMapping("/new")
     public String showNewForm(Model model) {
         model.addAttribute("recipe", new Recipe());
@@ -126,10 +141,10 @@ public class RecipeController {
     public String cook(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             _recipeService.cookRecipe(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Recipe cooked! Ingredients deducted from stock.");
+            redirectAttributes.addFlashAttribute("successMessage", "Gekocht! Zutaten wurden abgezogen.");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/recipes";
+        return "redirect:/recipes/" + id;
     }
 }

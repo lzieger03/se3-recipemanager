@@ -32,9 +32,8 @@
                     </ul>
                 </div>
                 <div class="card-footer d-flex gap-2">
-                    <form th:action="@{/recipes/{id}/cook(id=${recipe.recipeId})}" method="post">
-                        <button type="submit" class="btn btn-success btn-sm">Cook</button>
-                    </form>
+                    <a th:href="@{/recipes/{id}/cook(id=${recipe.recipeId})}"
+                       class="btn btn-success btn-sm">&#127859; Kochen</a>
                     <a th:href="@{/recipes/{id}/edit(id=${recipe.recipeId})}"
                        class="btn btn-outline-secondary btn-sm">Edit</a>
                     <form th:action="@{/recipes/{id}/delete(id=${recipe.recipeId})}" method="post">
