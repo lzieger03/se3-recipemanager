@@ -48,7 +48,7 @@ Drei Tabellen:
 - `recipe_ingredients` – Verknüpfungstabelle (welche Zutat in welcher Menge)
 
 H2-Konsole erreichbar unter `http://localhost:8080/h2-console`  
-JDBC-URL: `jdbc:h2:file:./data/recipedb` | User: `sa` | Passwort: `password`
+JDBC-URL: `jdbc:h2:file:./data/recipedb` | User: `sa` | Passwort: empty
 
 ---
 
