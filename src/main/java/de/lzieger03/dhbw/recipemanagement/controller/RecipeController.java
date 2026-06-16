@@ -91,7 +91,8 @@ public class RecipeController {
                        @RequestParam(required = false) String description,
                        @RequestParam(required = false) String instructions,
                        @RequestParam int portions,
-                       @RequestParam(required = false) List<Long> ingredientIds,
+                       @RequestParam(required = false) List<String> ingredientNames,
+                       @RequestParam(required = false) List<String> ingredientUnits,
                        @RequestParam(required = false) List<Double> requiredAmounts,
                        RedirectAttributes redirectAttributes) {
 
@@ -109,15 +110,18 @@ public class RecipeController {
 
         recipe.getRecipeIngredients().clear();
 
-        if (ingredientIds != null && requiredAmounts != null) {
-            for (int i = 0; i < ingredientIds.size(); i++) {
-                final var ingredientOptional = _ingredientService.findById(ingredientIds.get(i));
-                if (ingredientOptional.isEmpty()) {
+        if (ingredientNames != null && requiredAmounts != null) {
+            for (int i = 0; i < ingredientNames.size(); i++) {
+                final String ingredientName = ingredientNames.get(i);
+                if (ingredientName == null || ingredientName.isBlank()) {
                     continue;
                 }
+                final String unit = (ingredientUnits != null && i < ingredientUnits.size())
+                        ? ingredientUnits.get(i) : "g";
+                final var ingredient = _ingredientService.findOrCreate(ingredientName, unit);
                 final RecipeIngredient ri = new RecipeIngredient();
                 ri.setRecipe(recipe);
-                ri.setIngredient(ingredientOptional.get());
+                ri.setIngredient(ingredient);
                 ri.setRequiredAmount(requiredAmounts.get(i));
                 recipe.getRecipeIngredients().add(ri);
             }

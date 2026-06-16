@@ -38,4 +38,16 @@ public class IngredientService {
         LOG.info("Deleting ingredient with id={}", id);
         _ingredientRepo.deleteById(id);
     }
+
+    public Ingredient findOrCreate(String name, String unit) {
+        final String trimmedName = name.trim();
+        return _ingredientRepo.findByNameIgnoreCase(trimmedName).orElseGet(() -> {
+            LOG.info("Creating new ingredient on-the-fly: {}", trimmedName);
+            final Ingredient i = new Ingredient();
+            i.setName(trimmedName);
+            i.setUnit(unit != null && !unit.trim().isEmpty() ? unit.trim() : "g");
+            i.setAvailableAmount(0.0);
+            return _ingredientRepo.save(i);
+        });
+    }
 }

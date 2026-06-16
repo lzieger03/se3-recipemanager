@@ -38,25 +38,40 @@
         <!-- Ingredients -->
         <div class="mb-3">
             <label class="form-label fw-bold">Ingredients</label>
+            <small class="text-muted d-block mb-2">Neue Zutaten einfach eintippen — werden automatisch angelegt.</small>
+
+            <!-- datalist with existing ingredient names for autocomplete -->
+            <datalist id="ingredients-datalist">
+                <option th:each="ing : ${allIngredients}"
+                        th:value="${ing.name}"
+                        th:label="${ing.unit}">
+                </option>
+            </datalist>
+
             <table class="table table-sm" id="ingredientTable">
                 <thead>
                     <tr>
-                        <th>Ingredient</th>
-                        <th>Amount</th>
-                        <th></th>
+                        <th>Zutat</th>
+                        <th style="width:110px">Einheit</th>
+                        <th style="width:110px">Menge</th>
+                        <th style="width:40px"></th>
                     </tr>
                 </thead>
                 <tbody id="ingredientRows">
                     <!-- existing rows when editing -->
                     <tr th:each="ri : ${recipe.recipeIngredients}">
                         <td>
-                            <select name="ingredientIds" class="form-select form-select-sm">
-                                <option th:each="ing : ${allIngredients}"
-                                        th:value="${ing.ingredientId}"
-                                        th:text="${ing.name} + ' (' + ${ing.unit} + ')'"
-                                        th:selected="${ing.ingredientId == ri.ingredient.ingredientId}">
-                                </option>
-                            </select>
+                            <input type="text" name="ingredientNames" class="form-control form-control-sm"
+                                   list="ingredients-datalist"
+                                   th:value="${ri.ingredient.name}"
+                                   placeholder="z.B. Mehl"
+                                   autocomplete="off"
+                                   oninput="autofillUnit(this)" required/>
+                        </td>
+                        <td>
+                            <input type="text" name="ingredientUnits" class="form-control form-control-sm"
+                                   th:value="${ri.ingredient.unit}"
+                                   placeholder="g"/>
                         </td>
                         <td>
                             <input type="number" name="requiredAmounts" class="form-control form-control-sm"
@@ -70,33 +85,44 @@
                 </tbody>
             </table>
             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addIngredientRow()">
-                + Add Ingredient
+                + Zutat hinzufügen
             </button>
         </div>
 
         <div class="d-flex gap-2 mt-4">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a th:href="@{/recipes}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Speichern</button>
+            <a th:href="@{/recipes}" class="btn btn-outline-secondary">Abbrechen</a>
         </div>
     </form>
 
-    <!-- ingredient options for JS -->
     <script th:inline="javascript">
-        const allIngredients = /*[[${allIngredients}]]*/ [];
+        // map name → unit for autocomplete fill
+        const ingredientUnitMap = {};
+        /*[[${allIngredients}]]*/ [].forEach(ing => {
+            ingredientUnitMap[ing.name.toLowerCase()] = ing.unit;
+        });
+
+        function autofillUnit(nameInput) {
+            const unit = ingredientUnitMap[nameInput.value.trim().toLowerCase()];
+            if (unit) {
+                const row = nameInput.closest('tr');
+                const unitInput = row.querySelector('input[name="ingredientUnits"]');
+                if (unitInput) unitInput.value = unit;
+            }
+        }
 
         function addIngredientRow() {
             const tbody = document.getElementById('ingredientRows');
             const tr = document.createElement('tr');
-
-            let options = allIngredients.map(ing =>
-                `<option value="${ing.ingredientId}">${ing.name} (${ing.unit})</option>`
-            ).join('');
-
             tr.innerHTML = `
                 <td>
-                    <select name="ingredientIds" class="form-select form-select-sm">
-                        ${options}
-                    </select>
+                    <input type="text" name="ingredientNames" class="form-control form-control-sm"
+                           list="ingredients-datalist" placeholder="z.B. Mehl"
+                           autocomplete="off" oninput="autofillUnit(this)" required/>
+                </td>
+                <td>
+                    <input type="text" name="ingredientUnits" class="form-control form-control-sm"
+                           placeholder="g"/>
                 </td>
                 <td>
                     <input type="number" name="requiredAmounts" class="form-control form-control-sm"
@@ -107,6 +133,7 @@
                             onclick="this.closest('tr').remove()">✕</button>
                 </td>`;
             tbody.appendChild(tr);
+            tr.querySelector('input[name="ingredientNames"]').focus();
         }
     </script>
 </section>
