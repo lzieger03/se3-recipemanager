@@ -18,36 +18,36 @@ public class RecipeService {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipeService.class);
 
-    private final RecipeRepository _recipeRepo;
-    private final IngredientRepository _ingredientRepo;
+    private final RecipeRepository recipeRepo;
+    private final IngredientRepository ingredientRepo;
 
     @Autowired
     public RecipeService(RecipeRepository recipeRepo, IngredientRepository ingredientRepo) {
-        _recipeRepo = recipeRepo;
-        _ingredientRepo = ingredientRepo;
+        recipeRepo = recipeRepo;
+        ingredientRepo = ingredientRepo;
     }
 
     public List<Recipe> findAll() {
-        return _recipeRepo.findAllByOrderByNameAsc();
+        return recipeRepo.findAllByOrderByNameAsc();
     }
 
     public Optional<Recipe> findById(Long id) {
-        return _recipeRepo.findById(id);
+        return recipeRepo.findById(id);
     }
 
     public Recipe save(Recipe recipe) {
         LOG.info("Saving recipe: {}", recipe.getName());
-        return _recipeRepo.save(recipe);
+        return recipeRepo.save(recipe);
     }
 
     public void deleteById(Long id) {
         LOG.info("Deleting recipe with id={}", id);
-        _recipeRepo.deleteById(id);
+        recipeRepo.deleteById(id);
     }
 
     @Transactional
     public void cookRecipe(Long id) {
-        final Recipe recipe = _recipeRepo.findById(id)
+        final Recipe recipe = recipeRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Rezept nicht gefunden: " + id));
 
         for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
@@ -63,7 +63,7 @@ public class RecipeService {
         for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
             final Ingredient ingredient = ri.getIngredient();
             ingredient.setAvailableAmount(ingredient.getAvailableAmount() - ri.getRequiredAmount());
-            _ingredientRepo.save(ingredient);
+            ingredientRepo.save(ingredient);
         }
 
         LOG.info("Cooked recipe '{}', ingredients deducted from stock.", recipe.getName());

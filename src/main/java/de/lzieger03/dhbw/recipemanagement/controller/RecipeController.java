@@ -25,24 +25,24 @@ public class RecipeController {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipeController.class);
 
-    private final RecipeService _recipeService;
-    private final IngredientService _ingredientService;
+    private final RecipeService recipeService;
+    private final IngredientService ingredientService;
 
     @Autowired
     public RecipeController(RecipeService recipeService, IngredientService ingredientService) {
-        _recipeService = recipeService;
-        _ingredientService = ingredientService;
+        recipeService = recipeService;
+        ingredientService = ingredientService;
     }
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("recipes", _recipeService.findAll());
+        model.addAttribute("recipes", recipeService.findAll());
         return "recipes/list";
     }
 
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        final var recipeOptional = _recipeService.findById(id);
+        final var recipeOptional = recipeService.findById(id);
         if (recipeOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Rezept nicht gefunden.");
             return "redirect:/recipes";
@@ -53,7 +53,7 @@ public class RecipeController {
 
     @GetMapping("/{id}/cook")
     public String cookMode(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        final var recipeOptional = _recipeService.findById(id);
+        final var recipeOptional = recipeService.findById(id);
         if (recipeOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Rezept nicht gefunden.");
             return "redirect:/recipes";
@@ -69,19 +69,19 @@ public class RecipeController {
     @GetMapping("/new")
     public String showNewForm(Model model) {
         model.addAttribute("recipe", new Recipe());
-        model.addAttribute("allIngredients", _ingredientService.findAll());
+        model.addAttribute("allIngredients", ingredientService.findAll());
         return "recipes/form";
     }
 
     @GetMapping("/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        final var recipeOptional = _recipeService.findById(id);
+        final var recipeOptional = recipeService.findById(id);
         if (recipeOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Rezept nicht gefunden.");
             return "redirect:/recipes";
         }
         model.addAttribute("recipe", recipeOptional.get());
-        model.addAttribute("allIngredients", _ingredientService.findAll());
+        model.addAttribute("allIngredients", ingredientService.findAll());
         return "recipes/form";
     }
 
@@ -98,7 +98,7 @@ public class RecipeController {
 
         final Recipe recipe;
         if (recipeId != null) {
-            recipe = _recipeService.findById(recipeId).orElse(new Recipe());
+            recipe = recipeService.findById(recipeId).orElse(new Recipe());
         } else {
             recipe = new Recipe();
         }
@@ -118,7 +118,7 @@ public class RecipeController {
                 }
                 final String unit = (ingredientUnits != null && i < ingredientUnits.size())
                         ? ingredientUnits.get(i) : "g";
-                final var ingredient = _ingredientService.findOrCreate(ingredientName, unit);
+                final var ingredient = ingredientService.findOrCreate(ingredientName, unit);
                 final RecipeIngredient ri = new RecipeIngredient();
                 ri.setRecipe(recipe);
                 ri.setIngredient(ingredient);
@@ -127,7 +127,7 @@ public class RecipeController {
             }
         }
 
-        _recipeService.save(recipe);
+        recipeService.save(recipe);
         LOG.info("Saved recipe: {}", name);
         redirectAttributes.addFlashAttribute("successMessage", "Rezept gespeichert.");
         return "redirect:/recipes";
@@ -135,7 +135,7 @@ public class RecipeController {
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        _recipeService.deleteById(id);
+        recipeService.deleteById(id);
         LOG.info("Deleted recipe with id={}", id);
         redirectAttributes.addFlashAttribute("successMessage", "Rezept gelöscht.");
         return "redirect:/recipes";
@@ -144,7 +144,7 @@ public class RecipeController {
     @PostMapping("/{id}/cook")
     public String cook(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            _recipeService.cookRecipe(id);
+            recipeService.cookRecipe(id);
             redirectAttributes.addFlashAttribute("successMessage", "Gekocht! Zutaten wurden abgezogen.");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());

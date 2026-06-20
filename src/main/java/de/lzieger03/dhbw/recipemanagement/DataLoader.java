@@ -18,18 +18,18 @@ public class DataLoader implements CommandLineRunner {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataLoader.class);
 
-    private final IngredientRepository _ingredientRepo;
-    private final RecipeRepository _recipeRepo;
+    private final IngredientRepository ingredientRepo;
+    private final RecipeRepository recipeRepo;
 
     @Autowired
     public DataLoader(IngredientRepository ingredientRepo, RecipeRepository recipeRepo) {
-        _ingredientRepo = ingredientRepo;
-        _recipeRepo = recipeRepo;
+        ingredientRepo = ingredientRepo;
+        recipeRepo = recipeRepo;
     }
 
     @Override
     public void run(String... args) {
-        if (_ingredientRepo.count() > 0) {
+        if (ingredientRepo.count() > 0) {
             LOG.info("Test data already present – skipping seed.");
             return;
         }
@@ -38,7 +38,7 @@ public class DataLoader implements CommandLineRunner {
         seedPancakes(ing);
         seedBolognese(ing);
         seedRuehrei(ing);
-        LOG.info("Seeded {} ingredients and {} recipes.", _ingredientRepo.count(), _recipeRepo.count());
+        LOG.info("Seeded {} ingredients and {} recipes.", ingredientRepo.count(), recipeRepo.count());
     }
 
     /**
@@ -76,7 +76,7 @@ public class DataLoader implements CommandLineRunner {
         addIngredient(r, ing.get("butter"),  30.0);
         addIngredient(r, ing.get("salz"),     2.0);
         addIngredient(r, ing.get("zucker"),  20.0);
-        _recipeRepo.save(r);
+        recipeRepo.save(r);
     }
 
     /** Seeds the Spaghetti Bolognese recipe with its ingredients. */
@@ -96,7 +96,7 @@ public class DataLoader implements CommandLineRunner {
         addIngredient(r, ing.get("olivenoel"),     20.0);
         addIngredient(r, ing.get("salz"),           3.0);
         addIngredient(r, ing.get("parmesan"),      40.0);
-        _recipeRepo.save(r);
+        recipeRepo.save(r);
     }
 
     /** Seeds the Rührei recipe with its ingredients. */
@@ -110,7 +110,7 @@ public class DataLoader implements CommandLineRunner {
         addIngredient(r, ing.get("milch"),  30.0);
         addIngredient(r, ing.get("butter"), 15.0);
         addIngredient(r, ing.get("salz"),    1.0);
-        _recipeRepo.save(r);
+        recipeRepo.save(r);
     }
 
     // --- helpers ---
@@ -121,7 +121,7 @@ public class DataLoader implements CommandLineRunner {
         i.setName(name);
         i.setUnit(unit);
         i.setAvailableAmount(amount);
-        return _ingredientRepo.save(i);
+        return ingredientRepo.save(i);
     }
 
     private Recipe recipe(String name, String description, String instructions, int portions) {

@@ -20,16 +20,16 @@ public class IngredientController {
 
     private static final Logger LOG = LoggerFactory.getLogger(IngredientController.class);
 
-    private final IngredientService _ingredientService;
+    private final IngredientService ingredientService;
 
     @Autowired
     public IngredientController(IngredientService ingredientService) {
-        _ingredientService = ingredientService;
+        ingredientService = ingredientService;
     }
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("ingredients", _ingredientService.findAll());
+        model.addAttribute("ingredients", ingredientService.findAll());
         return "ingredients/list";
     }
 
@@ -41,7 +41,7 @@ public class IngredientController {
 
     @GetMapping("/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        final var ingredientOptional = _ingredientService.findById(id);
+        final var ingredientOptional = ingredientService.findById(id);
         if (ingredientOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Zutat nicht gefunden.");
             return "redirect:/ingredients";
@@ -58,14 +58,14 @@ public class IngredientController {
                        RedirectAttributes redirectAttributes) {
         final Ingredient ingredient;
         if (ingredientId != null) {
-            ingredient = _ingredientService.findById(ingredientId).orElse(new Ingredient());
+            ingredient = ingredientService.findById(ingredientId).orElse(new Ingredient());
         } else {
             ingredient = new Ingredient();
         }
         ingredient.setName(name);
         ingredient.setAvailableAmount(availableAmount);
         ingredient.setUnit(unit);
-        _ingredientService.save(ingredient);
+        ingredientService.save(ingredient);
         LOG.info("Saved ingredient: {}", name);
         redirectAttributes.addFlashAttribute("successMessage", "Zutat gespeichert.");
         return "redirect:/ingredients";
@@ -73,7 +73,7 @@ public class IngredientController {
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        _ingredientService.deleteById(id);
+        ingredientService.deleteById(id);
         LOG.info("Deleted ingredient with id={}", id);
         redirectAttributes.addFlashAttribute("successMessage", "Zutat gelöscht.");
         return "redirect:/ingredients";
