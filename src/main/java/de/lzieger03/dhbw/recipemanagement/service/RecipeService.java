@@ -48,15 +48,15 @@ public class RecipeService {
     @Transactional
     public void cookRecipe(Long id) {
         final Recipe recipe = _recipeRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Recipe not found: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Rezept nicht gefunden: " + id));
 
         for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
             final Ingredient ingredient = ri.getIngredient();
             if (ingredient.getAvailableAmount() < ri.getRequiredAmount()) {
                 throw new IllegalStateException(
-                        "Not enough " + ingredient.getName() + " in stock. "
-                        + "Required: " + ri.getRequiredAmount() + " " + ingredient.getUnit()
-                        + ", available: " + ingredient.getAvailableAmount() + " " + ingredient.getUnit());
+                        "Nicht genug " + ingredient.getName() + " vorhanden. "
+                        + "Benötigt: " + ri.getRequiredAmount() + " " + ingredient.getUnit()
+                        + ", vorhanden: " + ingredient.getAvailableAmount() + " " + ingredient.getUnit());
             }
         }
 

@@ -2,13 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::section})}">
 <head>
-    <title>Recipes</title>
+    <title>Rezepte</title>
 </head>
 <body>
 <section th:fragment="content">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1>Recipes</h1>
-        <a th:href="@{/recipes/new}" class="btn btn-primary">+ New Recipe</a>
+        <h1>Rezepte</h1>
+        <a th:href="@{/recipes/new}" class="btn btn-primary">+ Neues Rezept</a>
     </div>
 
     <div th:if="${not #lists.isEmpty(recipes)}" class="row row-cols-1 row-cols-md-2 g-4">
@@ -21,7 +21,7 @@
                            th:text="${recipe.name}"></a>
                     </h5>
                     <p class="card-text text-muted" th:text="${recipe.description}"></p>
-                    <p class="card-text"><small>Portions: <span th:text="${recipe.portions}"></span></small></p>
+                    <p class="card-text"><small>Portionen: <span th:text="${recipe.portions}"></span></small></p>
 
                     <ul class="list-unstyled" th:if="${not #lists.isEmpty(recipe.recipeIngredients)}">
                         <li th:each="ri : ${recipe.recipeIngredients}">
@@ -35,17 +35,17 @@
                     <a th:href="@{/recipes/{id}/cook(id=${recipe.recipeId})}"
                        class="btn btn-success btn-sm">&#127859; Kochen</a>
                     <a th:href="@{/recipes/{id}/edit(id=${recipe.recipeId})}"
-                       class="btn btn-outline-secondary btn-sm">Edit</a>
+                       class="btn btn-outline-secondary btn-sm">Bearbeiten</a>
                     <form th:action="@{/recipes/{id}/delete(id=${recipe.recipeId})}" method="post">
                         <button type="submit" class="btn btn-outline-danger btn-sm"
-                                onclick="return confirm('Delete this recipe?')">Delete</button>
+                                onclick="return confirm('Rezept wirklich löschen?')">Löschen</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <p th:if="${#lists.isEmpty(recipes)}" class="text-muted">No recipes yet.</p>
+    <p th:if="${#lists.isEmpty(recipes)}" class="text-muted">Noch keine Rezepte vorhanden.</p>
 </section>
 </body>
 </html>

@@ -44,7 +44,7 @@ public class RecipeController {
     public String detail(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         final var recipeOptional = _recipeService.findById(id);
         if (recipeOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Recipe not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Rezept nicht gefunden.");
             return "redirect:/recipes";
         }
         model.addAttribute("recipe", recipeOptional.get());
@@ -55,7 +55,7 @@ public class RecipeController {
     public String cookMode(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         final var recipeOptional = _recipeService.findById(id);
         if (recipeOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Recipe not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Rezept nicht gefunden.");
             return "redirect:/recipes";
         }
         final Recipe recipe = recipeOptional.get();
@@ -77,7 +77,7 @@ public class RecipeController {
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         final var recipeOptional = _recipeService.findById(id);
         if (recipeOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Recipe not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Rezept nicht gefunden.");
             return "redirect:/recipes";
         }
         model.addAttribute("recipe", recipeOptional.get());
@@ -129,7 +129,7 @@ public class RecipeController {
 
         _recipeService.save(recipe);
         LOG.info("Saved recipe: {}", name);
-        redirectAttributes.addFlashAttribute("successMessage", "Recipe saved.");
+        redirectAttributes.addFlashAttribute("successMessage", "Rezept gespeichert.");
         return "redirect:/recipes";
     }
 
@@ -137,7 +137,7 @@ public class RecipeController {
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         _recipeService.deleteById(id);
         LOG.info("Deleted recipe with id={}", id);
-        redirectAttributes.addFlashAttribute("successMessage", "Recipe deleted.");
+        redirectAttributes.addFlashAttribute("successMessage", "Rezept gelöscht.");
         return "redirect:/recipes";
     }
 

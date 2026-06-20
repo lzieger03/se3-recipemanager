@@ -43,7 +43,7 @@ public class IngredientController {
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         final var ingredientOptional = _ingredientService.findById(id);
         if (ingredientOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Ingredient not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Zutat nicht gefunden.");
             return "redirect:/ingredients";
         }
         model.addAttribute("ingredient", ingredientOptional.get());
@@ -67,7 +67,7 @@ public class IngredientController {
         ingredient.setUnit(unit);
         _ingredientService.save(ingredient);
         LOG.info("Saved ingredient: {}", name);
-        redirectAttributes.addFlashAttribute("successMessage", "Ingredient saved.");
+        redirectAttributes.addFlashAttribute("successMessage", "Zutat gespeichert.");
         return "redirect:/ingredients";
     }
 
@@ -75,7 +75,7 @@ public class IngredientController {
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         _ingredientService.deleteById(id);
         LOG.info("Deleted ingredient with id={}", id);
-        redirectAttributes.addFlashAttribute("successMessage", "Ingredient deleted.");
+        redirectAttributes.addFlashAttribute("successMessage", "Zutat gelöscht.");
         return "redirect:/ingredients";
     }
 }
