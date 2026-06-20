@@ -23,8 +23,8 @@ public class RecipeService {
 
     @Autowired
     public RecipeService(RecipeRepository recipeRepo, IngredientRepository ingredientRepo) {
-        recipeRepo = recipeRepo;
-        ingredientRepo = ingredientRepo;
+        this.recipeRepo = recipeRepo;
+        this.ingredientRepo = ingredientRepo;
     }
 
     public List<Recipe> findAll() {

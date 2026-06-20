@@ -30,8 +30,8 @@ public class RecipeController {
 
     @Autowired
     public RecipeController(RecipeService recipeService, IngredientService ingredientService) {
-        recipeService = recipeService;
-        ingredientService = ingredientService;
+        this.recipeService = recipeService;
+        this.ingredientService = ingredientService;
     }
 
     @GetMapping

@@ -24,7 +24,7 @@ public class IngredientController {
 
     @Autowired
     public IngredientController(IngredientService ingredientService) {
-        ingredientService = ingredientService;
+        this.ingredientService = ingredientService;
     }
 
     @GetMapping

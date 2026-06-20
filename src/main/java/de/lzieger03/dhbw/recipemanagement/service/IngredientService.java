@@ -18,7 +18,7 @@ public class IngredientService {
 
     @Autowired
     public IngredientService(IngredientRepository ingredientRepo) {
-        ingredientRepo = ingredientRepo;
+        this.ingredientRepo = ingredientRepo;
     }
 
     public List<Ingredient> findAll() {

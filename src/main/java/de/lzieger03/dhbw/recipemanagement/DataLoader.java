@@ -23,8 +23,8 @@ public class DataLoader implements CommandLineRunner {
 
     @Autowired
     public DataLoader(IngredientRepository ingredientRepo, RecipeRepository recipeRepo) {
-        ingredientRepo = ingredientRepo;
-        recipeRepo = recipeRepo;
+        this.ingredientRepo = ingredientRepo;
+        this.recipeRepo = recipeRepo;
     }
 
     @Override
