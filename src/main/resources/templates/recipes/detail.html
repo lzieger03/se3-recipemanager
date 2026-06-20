@@ -29,7 +29,7 @@
                         th:each="ri : ${recipe.recipeIngredients}">
                         <span th:text="${ri.ingredient.name}"></span>
                         <span class="text-muted">
-                            <span th:text="${ri.requiredAmount}"></span>
+                            <span th:text="${#numbers.formatDecimal(ri.requiredAmount, 1, 'POINT', 2, 'COMMA')}"></span>
                             <span th:text="${ri.ingredient.unit}"></span>
                         </span>
                     </li>

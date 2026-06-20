@@ -41,11 +41,11 @@
                     th:classappend="${ri.ingredient.availableAmount >= ri.requiredAmount} ? '' : 'table-danger'">
                     <td th:text="${ri.ingredient.name}"></td>
                     <td>
-                        <strong th:text="${ri.requiredAmount}"></strong>
+                        <strong th:text="${#numbers.formatDecimal(ri.requiredAmount, 1, 'POINT', 2, 'COMMA')}"></strong>
                         <span class="text-muted" th:text="${ri.ingredient.unit}"></span>
                     </td>
                     <td>
-                        <span th:text="${ri.ingredient.availableAmount}"></span>
+                        <span th:text="${#numbers.formatDecimal(ri.ingredient.availableAmount, 1, 'POINT', 2, 'COMMA')}"></span>
                         <span class="text-muted" th:text="${ri.ingredient.unit}"></span>
                     </td>
                     <td>

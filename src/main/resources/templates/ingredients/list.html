@@ -23,7 +23,7 @@
         <tbody>
             <tr th:each="ingredient : ${ingredients}">
                 <td th:text="${ingredient.name}"></td>
-                <td th:text="${ingredient.availableAmount}"></td>
+                <td th:text="${#numbers.formatDecimal(ingredient.availableAmount, 1, 'POINT', 2, 'COMMA')}"></td>
                 <td th:text="${ingredient.unit}"></td>
                 <td class="text-end">
                     <a th:href="@{/ingredients/{id}/edit(id=${ingredient.ingredientId})}"
