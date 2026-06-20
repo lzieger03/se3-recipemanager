@@ -5,7 +5,6 @@ import de.lzieger03.dhbw.recipemanagement.model.Recipe;
 import de.lzieger03.dhbw.recipemanagement.model.RecipeIngredient;
 import de.lzieger03.dhbw.recipemanagement.service.IngredientService;
 import de.lzieger03.dhbw.recipemanagement.service.RecipeService;
-import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +95,21 @@ public class RecipeController {
                        @RequestParam(required = false) List<Double> requiredAmounts,
                        RedirectAttributes redirectAttributes) {
 
+        final String redirectTarget = recipeId != null
+                ? "redirect:/recipes/" + recipeId + "/edit"
+                : "redirect:/recipes/new";
+
+        if (name == null || name.isBlank()) {
+            LOG.warn("Validation failed: recipe name is blank");
+            redirectAttributes.addFlashAttribute("errorMessage", "Name darf nicht leer sein.");
+            return redirectTarget;
+        }
+        if (portions < 1) {
+            LOG.warn("Validation failed: portions={}", portions);
+            redirectAttributes.addFlashAttribute("errorMessage", "Portionen müssen mindestens 1 sein.");
+            return redirectTarget;
+        }
+
         final Recipe recipe;
         if (recipeId != null) {
             recipe = recipeService.findById(recipeId).orElse(new Recipe());
@@ -108,29 +122,36 @@ public class RecipeController {
         recipe.setInstructions(instructions);
         recipe.setPortions(portions);
 
-        recipe.getRecipeIngredients().clear();
-
-        if (ingredientNames != null && requiredAmounts != null) {
-            for (int i = 0; i < ingredientNames.size(); i++) {
-                final String ingredientName = ingredientNames.get(i);
-                if (ingredientName == null || ingredientName.isBlank()) {
-                    continue;
-                }
-                final String unit = (ingredientUnits != null && i < ingredientUnits.size())
-                        ? ingredientUnits.get(i) : "g";
-                final var ingredient = ingredientService.findOrCreate(ingredientName, unit);
-                final RecipeIngredient ri = new RecipeIngredient();
-                ri.setRecipe(recipe);
-                ri.setIngredient(ingredient);
-                ri.setRequiredAmount(requiredAmounts.get(i));
-                recipe.getRecipeIngredients().add(ri);
-            }
-        }
-
+        linkIngredients(recipe, ingredientNames, ingredientUnits, requiredAmounts);
         recipeService.save(recipe);
         LOG.info("Saved recipe: {}", name);
         redirectAttributes.addFlashAttribute("successMessage", "Rezept gespeichert.");
         return "redirect:/recipes";
+    }
+
+    /** Clears and rebuilds the ingredient list of a recipe from the form submission data. */
+    private void linkIngredients(Recipe recipe,
+                                 List<String> ingredientNames,
+                                 List<String> ingredientUnits,
+                                 List<Double> requiredAmounts) {
+        recipe.getRecipeIngredients().clear();
+        if (ingredientNames == null || requiredAmounts == null) {
+            return;
+        }
+        for (int i = 0; i < ingredientNames.size(); i++) {
+            final String ingredientName = ingredientNames.get(i);
+            if (ingredientName == null || ingredientName.isBlank()) {
+                continue;
+            }
+            final String unit = (ingredientUnits != null && i < ingredientUnits.size())
+                    ? ingredientUnits.get(i) : "g";
+            final var ingredient = ingredientService.findOrCreate(ingredientName, unit);
+            final RecipeIngredient ri = new RecipeIngredient();
+            ri.setRecipe(recipe);
+            ri.setIngredient(ingredient);
+            ri.setRequiredAmount(requiredAmounts.get(i));
+            recipe.getRecipeIngredients().add(ri);
+        }
     }
 
     @PostMapping("/{id}/delete")

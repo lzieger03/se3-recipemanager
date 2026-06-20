@@ -56,6 +56,26 @@ public class IngredientController {
                        @RequestParam double availableAmount,
                        @RequestParam String unit,
                        RedirectAttributes redirectAttributes) {
+        final String redirectTarget = ingredientId != null
+                ? "redirect:/ingredients/" + ingredientId + "/edit"
+                : "redirect:/ingredients/new";
+
+        if (name == null || name.isBlank()) {
+            LOG.warn("Validation failed: name is blank");
+            redirectAttributes.addFlashAttribute("errorMessage", "Name darf nicht leer sein.");
+            return redirectTarget;
+        }
+        if (unit == null || unit.isBlank()) {
+            LOG.warn("Validation failed: unit is blank");
+            redirectAttributes.addFlashAttribute("errorMessage", "Einheit darf nicht leer sein.");
+            return redirectTarget;
+        }
+        if (availableAmount < 0) {
+            LOG.warn("Validation failed: availableAmount={}", availableAmount);
+            redirectAttributes.addFlashAttribute("errorMessage", "Bestand darf nicht negativ sein.");
+            return redirectTarget;
+        }
+
         final Ingredient ingredient;
         if (ingredientId != null) {
             ingredient = ingredientService.findById(ingredientId).orElse(new Ingredient());
