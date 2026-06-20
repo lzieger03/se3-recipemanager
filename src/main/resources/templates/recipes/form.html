@@ -95,11 +95,11 @@
         </div>
     </form>
 
-    <script th:inline="javascript">
-        // map name → unit for autocomplete fill
+    <script>
+        // build map from already-rendered datalist — no Hibernate serialization needed
         const ingredientUnitMap = {};
-        /*[[${allIngredients}]]*/ [].forEach(ing => {
-            ingredientUnitMap[ing.name.toLowerCase()] = ing.unit;
+        document.querySelectorAll('#ingredients-datalist option').forEach(opt => {
+            ingredientUnitMap[opt.value.toLowerCase()] = opt.label;
         });
 
         function autofillUnit(nameInput) {
