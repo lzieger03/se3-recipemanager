@@ -9,7 +9,7 @@ Eine kleine Web-App zum Verwalten von Rezepten und Zutaten. Man kann Rezepte anl
 ## Starten
 
 ```bash
-mvn spring-boot:run
+mvnw spring-boot:run
 ```
 
 Danach läuft die App unter `http://localhost:8080`.
